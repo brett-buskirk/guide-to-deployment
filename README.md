@@ -79,11 +79,11 @@ You'll need to remember the ID of your key, because you'll need it for the next 
 DigitalOcean calls their VMs `droplets`. To create a droplet, run the following command:
 
 ```shell
-doctl compute droplet create --image debian-12-x64 --size s-1vcpu-2gb --region nyc1 --enable-monitoring --ssh-keys 39125477 indianatrektribe.online
+doctl compute droplet create --image debian-12-x64 --size s-1vcpu-2gb --region nyc1 --enable-monitoring --ssh-keys 39125477 --tag-name webserver indianatrektribe.online
 ```
 ```shell
-ID           Name                       Public IPv4    Private IPv4    Public IPv6    Memory    VCPUs    Disk    Region    Image            VPC UUID    Status    Tags    Features                    Volumes
-370142505    indianatrektribe.online                                                  2048      1        50      nyc1      Debian 12 x64                new               monitoring,droplet_agent     
+ID           Name                       Public IPv4    Private IPv4    Public IPv6    Memory    VCPUs    Disk    Region    Image            VPC UUID    Status    Tags         Features                    Volumes
+370148209    indianatrektribe.online                                                  2048      1        50      nyc1      Debian 12 x64                new       webserver    monitoring,droplet_agent    
 ```
 
 As you can see, you'll get some output showing that the droplet was successfully created. You can also verify this by going to your DigitalOcean dashboard, where you will see the newly-created droplet displayed.
@@ -98,6 +98,7 @@ Okay, that's a pretty gnarly command, so let's break it down:
 * `--region nyc1`: The region where the cloud server is located
 * `--enable-monitoring`: Enables monitoring through DigitalOcean for analytics
 * `--ssh-keys 39125477`: The ID of your SSH key to be added to the VM
+* `--tag-name`: A tag to identify this droplet as a webserver
 * `indianatrektribe.online`: The name of the droplet
 
 Once the droplet has been created, you can connect to it remotely by running:
