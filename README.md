@@ -83,7 +83,7 @@ doctl compute droplet create --image debian-12-x64 --size s-1vcpu-2gb --region n
 ```
 ```shell
 ID           Name                       Public IPv4    Private IPv4    Public IPv6    Memory    VCPUs    Disk    Region    Image            VPC UUID    Status    Tags         Features                    Volumes
-370148209    indianatrektribe.online                                                  2048      1        50      nyc1      Debian 12 x64                new       webserver    monitoring,droplet_agent    
+370152202    indianatrektribe.online                                                  2048      1        50      nyc1      Debian 12 x64                new       webserver    monitoring,droplet_agent    
 ```
 
 As you can see, you'll get some output showing that the droplet was successfully created. You can also verify this by going to your DigitalOcean dashboard, where you will see the newly-created droplet displayed.
@@ -122,3 +122,44 @@ root@indianatrektribe:~#
 ```
 
 Once you have confirmed this, you can exit the remote host by typing `exit` at the terminal.
+
+---
+
+## Adding a Firewall to your Droplet ##
+
+Now that you have a droplet spun up, it's time to secure it! You only want to allow certian kinds of traffic in and out of your server. This is accomplished by creating a [firewall](https://www.digitalocean.com/community/tutorials/how-to-secure-web-server-infrastructure-with-digitalocean-cloud-firewalls-using-doctl) and attaching it to your droplet.
+
+```shell
+doctl compute firewall create --name webserver-firewall \
+ --droplet-ids 370152202 \
+ --inbound-rules "protocol:tcp,ports:22,address:0.0.0.0/0,address:::/0 protocol:tcp,ports:80,address:0.0.0.0/0,address:::/0 protocol:tcp,ports:443,address:0.0.0.0/0,address:::/0" \
+ --outbound-rules "protocol:icmp,address:0.0.0.0/0,address:::/0 protocol:tcp,ports:all,address:0.0.0.0/0,address:::/0 protocol:udp,ports:all,address:0.0.0.0/0,address:::/0"
+```
+
+```shell
+ID                                      Name                  Status     Created At              Inbound Rules                                                                                                                                                      Outbound Rules                                                                                                                                          Droplet IDs    Tags    Pending Changes
+23fd8e14-4bdf-42b5-a0c4-c35ce5272a42    webserver-firewall    waiting    2023-08-16T02:27:19Z    protocol:tcp,ports:22,address:0.0.0.0/0,address:::/0 protocol:tcp,ports:80,address:0.0.0.0/0,address:::/0 protocol:tcp,ports:443,address:0.0.0.0/0,address:::/0    protocol:icmp,address:0.0.0.0/0,address:::/0 protocol:tcp,ports:0,address:0.0.0.0/0,address:::/0 protocol:udp,ports:0,address:0.0.0.0/0,address:::/0    370152202              droplet_id:370152202,removing:false,status:waiting
+```
+
+If you can't remember your droplet's ID, you can run:
+
+```shell
+doctl compute droplet list
+```
+
+You can view your newly-created firewall by running:
+
+```shell
+doctl compute firewall list
+```
+
+Now, let's go over some of these firewall rules. The settings above allow for the following traffic:
+
+* All inbound SSH (port 22)
+* All inbound HTTP (port 80)
+* All inbound HTTPS (port 443)
+* All outbound ICMP
+* All outbound TCP
+* All outbound UDP
+
+These rules can be further refined by adding specific port ranges, but such is beyond the scope of this tutorial.
