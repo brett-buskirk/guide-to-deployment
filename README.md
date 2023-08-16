@@ -64,6 +64,8 @@ If successful, you should see some output confirming the key was added, along wi
 
 ```shell
 $ doctl compute ssh-key list
+```
+```shell
 ID          Name          FingerPrint
 39125477    do-key-rsa    55:5c:ce:7d:b3:6d:89:7b:37:48:bd:25:99:86:ae:eb
 ```
@@ -78,6 +80,8 @@ DigitalOcean calls their VMs `droplets`. To create a droplet, run the following 
 
 ```shell
 $ doctl compute droplet create --image debian-12-x64 --size s-1vcpu-2gb --region nyc1 --enable-monitoring --ssh-keys 39125477 indianatrektribe.online
+```
+```shell
 ID           Name                       Public IPv4    Private IPv4    Public IPv6    Memory    VCPUs    Disk    Region    Image            VPC UUID    Status    Tags    Features                    Volumes
 370142505    indianatrektribe.online                                                  2048      1        50      nyc1      Debian 12 x64                new               monitoring,droplet_agent     
 ```
