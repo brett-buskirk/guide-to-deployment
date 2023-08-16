@@ -39,7 +39,7 @@ For this project, we'll be using [DigitalOcean](https://digitalocean.com) as our
 DigitalOcean has a handy command line interface (CLI) that we will be using for much of our work. This CLI is called [doctl](https://docs.digitalocean.com/reference/doctl/), and you'll want to follow this link to learn about, install, and configure the CLI for our work throughout this process. Don't forget to create an [API token](https://docs.digitalocean.com/reference/api/create-personal-access-token/) and store it in a safe place, such as your password manager if you have one. Once you have `doctl` installed and configured, you can check this by running the following command in your terminal:
 
 ```shell
-$ doctl account get
+doctl account get
 ```
 
 ---
@@ -49,7 +49,7 @@ $ doctl account get
 In order to access your server remotely, you'll need to configure an [SSH key pair](https://www.ssh.com/academy/ssh/keygen) and add the public key to DigitalOcean. You can generate a key pair by running the following commmand:
 
 ```shell
-$ ssh-keygen -t rsa -f ~/.ssh/do-key-rsa
+ssh-keygen -t rsa -f ~/.ssh/do-key-rsa
 ```
 
 For this purpose, hit enter when prompted for a password in order to create a passwordless ssh key pair. This will create two files in a directory named `.ssh`. These files are named `do-key-rsa` (the private key) and `do-key-rsa.pub` (the public key).
@@ -57,13 +57,13 @@ For this purpose, hit enter when prompted for a password in order to create a pa
 To add the public key to DigitalOcean, run the following command:
 
 ```shell
-$ doctl compute ssh-key import do-key-rsa --public-key-file ~/.ssh/do-key-rsa.pub
+doctl compute ssh-key import do-key-rsa --public-key-file ~/.ssh/do-key-rsa.pub
 ```
 
 If successful, you should see some output confirming the key was added, along with the key's FingerPrint. You can also retrieve a list of your keys on DigitalOcean by running:
 
 ```shell
-$ doctl compute ssh-key list
+doctl compute ssh-key list
 ```
 ```shell
 ID          Name          FingerPrint
@@ -79,7 +79,7 @@ You'll need to remember the ID of your key, because you'll need it for the next 
 DigitalOcean calls their VMs `droplets`. To create a droplet, run the following command:
 
 ```shell
-$ doctl compute droplet create --image debian-12-x64 --size s-1vcpu-2gb --region nyc1 --enable-monitoring --ssh-keys 39125477 indianatrektribe.online
+doctl compute droplet create --image debian-12-x64 --size s-1vcpu-2gb --region nyc1 --enable-monitoring --ssh-keys 39125477 indianatrektribe.online
 ```
 ```shell
 ID           Name                       Public IPv4    Private IPv4    Public IPv6    Memory    VCPUs    Disk    Region    Image            VPC UUID    Status    Tags    Features                    Volumes
