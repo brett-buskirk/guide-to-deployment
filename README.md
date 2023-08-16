@@ -99,3 +99,25 @@ Okay, that's a pretty gnarly command, so let's break it down:
 * `--enable-monitoring`: Enables monitoring through DigitalOcean for analytics
 * `--ssh-keys 39125477`: The ID of your SSH key to be added to the VM
 * `indianatrektribe.online`: The name of the droplet
+
+Once the droplet has been created, you can connect to it remotely by running:
+
+```shell
+doctl compute ssh indianatrektribe.online --ssh-key-path ~/.ssh/do-key-rsa
+```
+
+You'll want to type `yes` when asked if you want to continue. Afterward, you should be connected to your VM.
+
+```shell
+Linux indianatrektribe 6.1.0-9-amd64 #1 SMP PREEMPT_DYNAMIC Debian 6.1.27-1 (2023-05-08) x86_64
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+root@indianatrektribe:~# 
+```
+
+Once you have confirmed this, you can exit the remote host by typing `exit` at the terminal.
