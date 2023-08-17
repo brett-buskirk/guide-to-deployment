@@ -163,3 +163,92 @@ Now, let's go over some of these firewall rules. The settings above allow for th
 * All outbound UDP
 
 These rules can be further refined by adding specific port ranges, but such is beyond the scope of this tutorial.
+
+---
+
+## Add Sudo User to the Droplet ##
+
+It's not a good idea to remote into your VM as a root user. Root access is powerful and should only be used with extreme caution. In place of this, you'll want to create a new user and give it root (priveleged) access. First log into your droplet:
+
+```shell
+doctl compute ssh indianatrektribe.online --ssh-key-path ~/.ssh/do-key-rsa
+```
+
+Create the new user, giving it whatever name you want, by running the following command:
+
+```shell
+sudo adduser brett
+```
+
+You'll need to supply a password (make sure you remember it!) and answer a few questions (which I typically leave blank), then you'll be prompted if the information is correct.
+
+Next, give your new user sudo priveleges:
+
+```shell
+usermod -aG sudo brett
+```
+
+Verify these changes by using the following command to switch to your new user:
+
+```shell
+su brett
+```
+
+Your prompt should change as follows:
+
+```shell
+root@indianatrektribe:~# su brett
+brett@indianatrektribe:/root$ 
+```
+
+Now you can use this user to run root commands by prepending the word `sudo` to them. Run the following:
+
+```shell
+sudo apt update && sudo apt upgrade -y
+```
+
+You'll have to enter your password the first time you use `sudo` in a session. The command above will update your server and apply any upgrades that might be available.
+
+Now you'll need to transfer the ssh keys from the root user's profile to your new user's profile. To do this you need to run the following commands. First you need to create the `.ssh` directory on the user's root directory:
+
+```shell
+mkdir /home/$USER/.ssh
+```
+
+Make the directory only executable by the user:
+
+```shell
+chmod 700 /home/$USER/.ssh
+```
+
+Copy the `authorized_keys` file that contains your public key:
+
+```shell
+sudo cp /root/.ssh/authorized_keys /home/$USER/.ssh/authorized_keys
+```
+
+Make everything in `.ssh` owned by the user:
+
+```shell
+sudo chown -R $USER:$USER /home/$USER/.ssh
+```
+
+Make it readable only by the user:
+
+```shell
+sudo chmod 600 /home/$USER/.ssh/authorized_keys
+```
+
+Now exit the current sessions by running the following command twice:
+
+```shell
+exit
+```
+
+Now when you remote into the remote host, use:
+
+```shell
+doctl compute ssh indianatrektribe.online --ssh-key-path ~/.ssh/do-key-rsa --ssh-user brett
+```
+
+You should now be logged in as your new user.
