@@ -327,3 +327,5 @@ Next you'll need to create and open the `index.html` page with the `nano` editor
 ```shell
 nano /var/www/indianatrektribe.online/html/index.html
 ```
+
+https://github.com/brett-buskirk/guide-to-deployment/tree/6fc00b390fd0c01efca677db76e8d5cc12a280ba/basic-website
