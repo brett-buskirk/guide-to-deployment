@@ -298,3 +298,32 @@ If everything is configured correctly, you can type your droplet's IP address in
 ```shell
 doctl compute droplet get indianatrektribe.online --format PublicIPv4
 ```
+
+---
+
+## Setting up the Nginx Server Blocks ###
+
+Next you need to set up the Nginx server blocks. When using the Nginx web server, server blocks can be used to encapsulate configuration details. You'll start this process by first creating the necessary directory structure:
+
+```shell
+sudo mkdir -p /var/www/indianatrektribe.online/html
+```
+
+Next, make sure the current user is the owner of the directory:
+
+
+```shell
+sudo chown -R $USER:$USER /var/www/indianatrektribe.online/html
+```
+
+Now set the appropriate permissions for the directory:
+
+```shell
+udo chmod -R 755 /var/www/indianatrektribe.online
+```
+
+Next you'll need to create and open the `index.html` page with the `nano` editor:
+
+```shell
+nano /var/www/indianatrektribe.online/html/index.html
+```
