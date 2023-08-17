@@ -252,3 +252,49 @@ doctl compute ssh indianatrektribe.online --ssh-key-path ~/.ssh/do-key-rsa --ssh
 ```
 
 You should now be logged in as your new user.
+
+---
+
+## Install `nginx` on the Droplet ##
+
+Before you can actually host a website on your droplet, you must first turn it into a webserver. You can do this with [nginx](https://www.nginx.com/). In order to install nginx, first connect to the remote host with the user you created above. Next, run the following command:
+
+```shell
+sudo apt install nginx
+```
+
+Now check to make sure the nginx service is running:
+
+```shell
+systemctl status nginx
+```
+
+You should see some output like the following:
+
+```shell
+● nginx.service - A high performance web server and a reverse proxy server
+     Loaded: loaded (/lib/systemd/system/nginx.service; enabled; preset: enabled)
+     Active: active (running) since Thu 2023-08-17 04:22:50 UTC; 45s ago
+       Docs: man:nginx(8)
+    Process: 24046 ExecStartPre=/usr/sbin/nginx -t -q -g daemon on; master_process on; (code=exited, status=0/SUCCESS)
+    Process: 24047 ExecStart=/usr/sbin/nginx -g daemon on; master_process on; (code=exited, status=0/SUCCESS)
+   Main PID: 24070 (nginx)
+      Tasks: 2 (limit: 2315)
+     Memory: 1.6M
+        CPU: 26ms
+     CGroup: /system.slice/nginx.service
+             ├─24070 "nginx: master process /usr/sbin/nginx -g daemon on; master_process on;"
+             └─24071 "nginx: worker process"
+```
+
+This informs you that the service is up and running.
+
+If everything is configured correctly, you can type your droplet's IP address in a browser and see the following screen:
+
+![Nginx landing page](./images/deploy-img-nginx.png)
+
+`Note:` If you don't know what your droplet's IPv4 address is, use the following command:
+
+```shell
+doctl compute droplet get indianatrektribe.online --format PublicIPv4
+```

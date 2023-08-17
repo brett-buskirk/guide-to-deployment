@@ -40,3 +40,7 @@ doctl compute firewall list
 ```shell
 doctl compute ssh indianatrektribe.online --ssh-key-path ~/.ssh/do-key-rsa --ssh-user brett
 ```
+
+```shell
+doctl compute droplet get indianatrektribe.online --format PublicIPv4
+```
