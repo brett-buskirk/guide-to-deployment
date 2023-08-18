@@ -322,10 +322,103 @@ Now set the appropriate permissions for the directory:
 udo chmod -R 755 /var/www/indianatrektribe.online
 ```
 
-Next you'll need to create and open the `index.html` page with the `nano` editor:
+Next you'll need to pull down a set of website files to serve, which we'll cover in the next section.
+
+---
+
+## Pull Down Website to Remote Host from GitHub ##
+
+Now you're going to pull down a repository from GitHub that contains a basic front-end website. Before you can do this, however, you'll need to install `git` on the remote host. You can do this with the following command:
 
 ```shell
-nano /var/www/indianatrektribe.online/html/index.html
+sudo apt install git
 ```
 
-https://github.com/brett-buskirk/guide-to-deployment/tree/6fc00b390fd0c01efca677db76e8d5cc12a280ba/basic-website
+Unless you have a repo of your own in mind, you can pull down the `basic-website` project from my GitHub page by running the following command:
+
+```shell
+git clone https://github.com/brett-buskirk/basic-website.git
+```
+
+Now you need to move all the basic website files to the location from which they will be served:
+
+
+```shell
+sudo mv -v ~/basic-website/* /var/www/indianatrektribe.online/html
+```
+
+Next you'll set up a server block with the correct directives that point to your custom web root:
+
+```shell
+sudo nano /etc/nginx/sites-available/indianatrektribe.online
+```
+
+This will open the `nano` editor, where you'll want to copy the following content:
+
+```
+server {
+    listen 80;
+    listen [::]:80;
+
+    root /var/www/indianatrektribe.online/html;
+    index index.html;
+
+    server_name indianatrektribe.online www.indianatrektribe.online;
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+    return 301 https://$server_name$request_uri; # maybe add later?
+}
+```
+
+Next, enable this server block by creating a symbolic link to your custom configuration file inside the `sites-enabled` directory, which Nginx reads during startup:
+
+```shell
+sudo ln -s /etc/nginx/sites-available/indianatrektribe.online /etc/nginx/sites-enabled/
+```
+
+You'll also want to delete the default enabled site:
+
+```shell
+sudo rm /etc/nginx/sites-enabled/default
+```
+
+
+To avoid a possible hash bucket memory problem that can arise from adding additional server names to your configuration, it is necessary to adjust a single value in the `/etc/nginx/nginx.conf` file. Open the file:
+
+```shell
+sudo nano /etc/nginx/nginx.conf
+```
+
+Find the `server_names_hash_bucket_size` directive and remove the `#` symbol to uncomment the line:
+
+```
+...
+http {
+    ...
+    server_names_hash_bucket_size 64;
+    ...
+}
+...
+```
+
+Next, test to make sure that there are no syntax errors in any of your Nginx files:
+
+```shell
+sudo nginx -t
+```
+
+If everything is okay, you'll see the following output:
+
+```shell
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+```
+
+Once your configuration test passes, restart Nginx to enable your changes:
+
+```shell
+sudo systemctl restart nginx
+```
+
