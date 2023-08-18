@@ -425,3 +425,74 @@ Once your configuration test passes, restart Nginx to enable your changes:
 ```shell
 sudo systemctl restart nginx
 ```
+
+---
+
+## Link Domain to DigitalOcean ##
+
+The next step is to link your domain from Namecheap to DigitalOcean. To do this, first login to your Namecheap account and select **Domain List** from the left main menu, then click the **Manage** button next to your domain on the right:
+
+![Manage Domain](./images/deploy-img-namecheap-domain-manage.png)
+
+Now select the **Custom DNS** option from the **Nameservers** dropdown menu, and enter the following nameservers:
+
+* `ns1.digitalocean.com`
+* `ns2.digitalocean.com`
+* `ns3.digitalocean.com`
+
+Once you're done, click the green checkmark to save your changes:
+
+![Set Custom DNS](./images/deploy-img-namecheap-custom-dns.png)
+
+**Note:** This requires the nameservers to propogate, so it could take up to 24-48 hours for the DNS changes to take effect (though sometimes it's much quicker).
+
+Once this is done, head on over to your DigitalOcean dashboard and open a terminal on your local machine so we can add the domain and update the DNS records.
+
+To add the domain to DigitalOcean, run the following command:
+
+```shell
+doctl compute domain create indianatrektribe.online
+```
+
+You should see the following output:
+
+```shell
+Domain                     TTL
+indianatrektribe.online    1800
+```
+
+Next you'll add a couple of new `A` records, which maps an IPv4 address to a domain name. This determines where to direct any requests for a domain name. To map an **apex domain (@)**, run the following command:
+
+```shell
+doctl compute domain records create indianatrektribe.online --record-type A --record-name @ --record-data 192.241.131.184
+```
+
+Output:
+
+```shell
+ID            Type    Name    Data               Priority    Port    TTL     Weight
+1695060856    A       @       192.241.131.184    0           0       1800    0
+```
+
+The next `A` record will add an **subdomain prefix** (e.g. `www`). To create this record, run the following command:
+
+```shell
+doctl compute domain records create indianatrektribe.online --record-type A --record-name www --record-data 192.241.131.184
+```
+
+Output:
+
+```shell
+ID            Type    Name    Data               Priority    Port    TTL     Weight
+1695061173    A       www     192.241.131.184    0           0       1800    0
+```
+
+Once this is done, you can visit your DigitalOcean dashboard to see the changes. You'll need to expand the **Manage** section on the main menu to the left, then select **Networking** from the menu. From there, click on the **Domains** tab and click on the name of your domain. You should be able to scroll down and see the list of **DNS Records** there:
+
+![DNS Records](./images/deploy-img-digitalocean-dns-records.png)
+
+Now, once the DNS has fully propogated from Namecheap to DigitalOcean, you'll be able to enter your domain name into the address bar of a browser and see your website:
+
+![Live HTTP Website](./images/deploy-img-live-http-site.png)
+
+Notice the **Not secure** warning in the address bar to the left of your domain name. You'll fix this in the next section when you add the SSL certificate to the droplet.
