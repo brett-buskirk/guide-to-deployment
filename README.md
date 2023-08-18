@@ -301,7 +301,7 @@ doctl compute droplet get indianatrektribe.online --format PublicIPv4
 
 ---
 
-## Setting up the Nginx Server Blocks ###
+## Setting up the Nginx Server Blocks (Part 1) ##
 
 Next you need to set up the Nginx server blocks. When using the Nginx web server, server blocks can be used to encapsulate configuration details. You'll start this process by first creating the necessary directory structure:
 
@@ -346,6 +346,10 @@ Now you need to move all the basic website files to the location from which they
 ```shell
 sudo mv -v ~/basic-website/* /var/www/indianatrektribe.online/html
 ```
+
+---
+
+## Setting up the Nginx Server Blocks (Part 2) ##
 
 Next you'll set up a server block with the correct directives that point to your custom web root:
 
@@ -421,4 +425,3 @@ Once your configuration test passes, restart Nginx to enable your changes:
 ```shell
 sudo systemctl restart nginx
 ```
-
