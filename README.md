@@ -368,7 +368,7 @@ server {
     location / {
         try_files $uri $uri/ =404;
     }
-    return 301 https://$server_name$request_uri; # maybe add later?
+#    return 301 https://$server_name$request_uri;
 }
 ```
 
