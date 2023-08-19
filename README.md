@@ -496,3 +496,178 @@ Now, once the DNS has fully propogated from Namecheap to DigitalOcean, you'll be
 ![Live HTTP Website](./images/deploy-img-live-http-site.png)
 
 Notice the **Not secure** warning in the address bar to the left of your domain name. You'll fix this in the next section when you add the SSL certificate to the droplet.
+
+---
+
+## Activate and set up SSL Certificate ##
+
+In order to secure your droplet, you'll need to activate and install an SSL Certificate. Before you begin with the SSL activation, you'll first need to have a CSR code generated on your server.
+
+CSR code (Certificate Signing Request) is a specific code and an essential part for the SSL activation. It contains information about website name and the company contact details. For many reasons, the code should be created on the hosting server end. On some servers, it is the obligatory condition.
+
+In order to generate a CSR, you must remote into your droplet and run the following commands.
+
+Switch to the root user:
+
+```shell
+sudo su
+```
+
+Create an `ssl` directory and move into it:
+
+```shell
+mkdir /root/ssl && cd /root/ssl
+```
+
+Use RSA key algorithm to generate CSR code:
+
+```shell
+openssl req -new -newkey rsa:2048 -nodes -keyout indianatrektribe.online -out indianatrektribe.online
+```
+
+After some weird output, you'll be asked some questions:
+
+```shell
+You are about to be asked to enter information that will be incorporated
+into your certificate request.
+What you are about to enter is what is called a Distinguished Name or a DN.
+There are quite a few fields but you can leave some blank
+For some fields there will be a default value,
+If you enter '.', the field will be left blank.
+-----
+Country Name (2 letter code) [AU]:US
+State or Province Name (full name) [Some-State]:Indiana
+Locality Name (eg, city) []:Indianapolis
+Organization Name (eg, company) [Internet Widgits Pty Ltd]:NA
+Organizational Unit Name (eg, section) []:NA
+Common Name (e.g. server FQDN or YOUR name) []:indianatrektribe.online
+Email Address []:buskirkbrett8@gmail.com
+
+Please enter the following 'extra' attributes
+to be sent with your certificate request
+A challenge password []:
+An optional company name []:
+```
+
+If you run an `ls` command, you can see there's a file named after your domain. Inside this file is the CSR code
+
+```shell
+cat indianatrektribe.online
+```
+
+Output:
+
+```shell
+-----BEGIN PRIVATE KEY-----
+[ a bunch of random letters, numbers, and symbols ]
+-----END PRIVATE KEY-----
+-----BEGIN CERTIFICATE REQUEST-----
+[ a bunch of random letters, numbers, and symbols ]
+-----END CERTIFICATE REQUEST-----
+```
+
+You'll need to copy everything between the `BEGIN` and `END CERTIFICATE REQUEST` lines, including those two lines themselves. Login to your [Namecheap](https://namecheap.com) account and click on **SSL Certificates** on the main menu to the left. Then click on the **Activate** button for you SSL certificate:
+
+![Activate SSL Certificate](./images/deploy-img-namecheap-ssl-activation.png)
+
+On the page that pops up, paste what you copied above into the **Enter CSR** box:
+
+![CSR Code Paste](./images/deploy-img-namecheap-csr-paste.png)
+
+If your code is correct, you'll see the name of your domain pop up in the **Primary Domain** box. After this, click the **Next** button to go to the next step. Here you'll select the **Add CNAME record** for the **DCV option** option. Then click the **Next** button again:
+
+![DCV Option](./images/deploy-img-namecheap-dcv-method.png)
+
+On the next page, verify your email address and click **Next**:
+
+![PositiveSSL Email Verification](./images/deploy-img-namecheap-positivessl-email.png)
+
+Confirm the details are correct, then click the **Submit** button:
+
+![PositiveSSL Confirmation](./images/deploy-img-namecheap-ssl-confirmation.png)
+
+You'll be redirected back to your Namecheap dashboard with information about your SSL certificate. As of now, it's pending validation.
+
+![PositiveSSL Finished](./images/deploy-img-namecheap-ssl-finish.png)
+
+Now click on the link that says `Get a CNAME record from this page (Edit methods)`. You'll be redirected to a page where you can get the DCV records you'll need to complete the activation process. On this page scroll down to where you see the **EDIT METHODS** button. Click the arrow next to it and select the **Get Record** button that pops down. 
+
+
+![Get DCV Record](./images/deploy-img-namecheap-get-record.png)
+
+You'll see a pop-up that shows two values you'll need to copy for the next step. These two values are **Host** and **Target**. Once you have these values copied somewhere, go ahead and click the **Done** button.
+
+Now that you have these two values, you'll use the `doctl` command to create a CNAME record for your droplet. From your local machine run the following command:
+
+```shell
+doctl compute domain records create indianatrektribe.online --record-type CNAME --record-name [Host (but without .indianatrektribe.online)] --record-data [Target (with a . added at the end)] --record-ttl 30
+```
+
+Notice the two values used in this command:
+
+* **[Host (but without .indianatrektribe.online)]:** This is the **Host** value you copied a minute ago. Hoewever, do ***not*** include the `.indianatrektribe.online` part.
+* **[Target (with a . added at the end)]:** This is the full **Target** value you copied a minute ago, but add a `.` at the end.
+
+You can go to [https://mxtoolbox.com/CnameLookup.aspx](https://mxtoolbox.com/CnameLookup.aspx) to see if the CNAME record is published or not. In the **Domain Name** box, paste the full **Host** value from above. You should see that the DNS record is published.
+
+Once your DNS record is published, you'll eventually get an email from Sectigo with a `.zip` file attachment that you need to download. This file needs to be copied over to your droplet. Navigate a terminal to the directory where the `.zip` file is located and enter the following command:
+
+```shell
+scp -i ~/.ssh/do-key-rsa indianatrektribe_online.zip root@indianatrektribe.online:~/ssl
+```
+
+Now remote into your droplet as the root user again and navigate to the `ssl` directory, where you need to extract the files:
+
+```shell
+apt install unzip && unzip indianatrektribe_online.zip
+```
+
+Next you'll need to combine the files:
+
+```shell
+cat indianatrektribe_online.crt > indianatrektribe_online_chain.crt ; echo >> indianatrektribe_online_chain.crt ; cat indianatrektribe_online.ca-bundle >> indianatrektribe_online.crt
+```
+
+Now you'll need to add a **server** block to the `nginx.conf` file, inside the **http** block. Open the file with:
+
+```shell
+nano /etc/nginx/nginx.conf
+```
+
+Add the following block at the bottom of the **http** block, before the closing bracket:
+
+```shell
+	server {
+
+		listen 443 ssl;
+
+		ssl_certificate /root/ssl/indianatrektribe_online_chain.crt;
+
+		ssl_certificate_key /root/ssl/indianatrektribe.online;
+
+		root /var/www/indianatrektribe.online/html;
+
+		server_name www.indianatrektribe.online;
+
+		keepalive_timeout 70;
+
+	}
+```
+
+Lastly, you'll need to uncomment a line in `/etc/nginx/sites-available/indianatrektribe.online`:
+
+```shell
+nano /etc/nginx/sites-available/indianatrektribe.online
+```
+
+Uncomment (remove the `#` symbol) the line, `return 301 https://$server_name$request_uri;`
+
+Now restart the Nginx service:
+
+```shell
+systemctl restart nginx
+```
+
+If everything goes smoothly, you should now be able to point your browser to your domain and see the lock symbol next to the address bar. Your site is now secure and protected by `HTTPS`. Your work here is now done!
+
+![Live HTTP Site](./images/deploy-img-live-https-site.png)
