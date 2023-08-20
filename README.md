@@ -4,6 +4,14 @@ This is a comprehensive guide to hosting and deploying a front-end React website
 
 ---
 
+## Initial Notes ##
+
+This project assumes some basic knowledge of or comfortablility using a terminal. The major steps are all included below, but it might behoove you to research anything you don't know about these commands. I personally used a Chromebook's Linux container for such development, but anything containing a Bash commandline should work just fine.
+
+Second, this tutorial follows the steps to create and use a domain I registered for this purpose. When following along, you'll want to purchase your own domain and substitute it whenever you see `indianatrektribe.online`, `indianatrektribe_online`, or similar conventions.
+
+---
+
 ## Registering a Domain Name ##
 
 The first step here is to make sure you have a domain name secured through a [registrar](https://www.namecheap.com/guru-guides/registries-registrars-and-registrants-what-is-the-difference-dp/). There are several choices out there to choose from, but in this case, we're going to use [Namecheap](https://namecheap.com). This process is fairly straight-forward, and once the transaction is complete, you'll be able to view your domain. Note that when we purchase the domain, we're also going to buy an SSL certificate, as shown in the next section. 
@@ -319,7 +327,7 @@ sudo chown -R $USER:$USER /var/www/indianatrektribe.online/html
 Now set the appropriate permissions for the directory:
 
 ```shell
-udo chmod -R 755 /var/www/indianatrektribe.online
+sudo chmod -R 755 /var/www/indianatrektribe.online
 ```
 
 Next you'll need to pull down a set of website files to serve, which we'll cover in the next section.
