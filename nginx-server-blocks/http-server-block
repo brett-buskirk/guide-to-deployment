@@ -1,0 +1,16 @@
+# File: /etc/nginx/sites-available/indianatrektribe.online
+
+server {
+        listen 80;
+        listen [::]:80;
+
+        root /var/www/indianatrektribe.online/html;
+        index index.html index.htm index.nginx-debian.html;
+
+        server_name indianatrektribe.online www.indianatrektribe.online;
+
+        location / {
+                try_files $uri $uri/ =404;
+        }
+#       return 301 https://$server_name$request_uri;
+}

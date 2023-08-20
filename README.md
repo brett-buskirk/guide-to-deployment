@@ -396,7 +396,6 @@ You'll also want to delete the default enabled site:
 sudo rm /etc/nginx/sites-enabled/default
 ```
 
-
 To avoid a possible hash bucket memory problem that can arise from adding additional server names to your configuration, it is necessary to adjust a single value in the `/etc/nginx/nginx.conf` file. Open the file:
 
 ```shell

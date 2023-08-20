@@ -1,1 +1,0 @@
-doctl compute droplet create --image debian-12-x64 --size s-1vcpu-2gb --region nyc1 --enable-monitoring true --ssh-keys do-key-rsa indianatrektribe.online

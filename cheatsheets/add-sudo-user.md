@@ -5,17 +5,17 @@ _These commands assume you're logged into the machine as eiher the root or anoth
 Create the new user:
 
 ```shell
-sudo adduser brett
+sudo adduser username
 ```
 
 Add the user to the sudo group:
 
 ```shell
-usermod -aG sudo brett
+usermod -aG sudo username
 ```
 
 Switch over to the new user:
 
 ```shell
-su brett
+su username
 ```
