@@ -1,0 +1,15 @@
+server {
+
+    listen 443 ssl;
+
+    ssl_certificate /root/ssl/indianatrektribe_online_chain.crt;
+
+    ssl_certificate_key /root/ssl/indianatrektribe.online;
+
+    root /var/www/indianatrektribe.online/html;
+
+    server_name www.indianatrektribe.online;
+
+    keepalive_timeout 70;
+
+}

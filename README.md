@@ -6,7 +6,7 @@ This is a comprehensive guide to hosting and deploying a front-end React website
 
 ## Initial Notes ##
 
-This project assumes some basic knowledge of or comfortablility using a terminal. The major steps are all included below, but it might behoove you to research anything you don't know about these commands. I personally used a Chromebook's Linux container for such development, but anything containing a Bash commandline should work just fine.
+This project assumes some basic knowledge of or comfortablility using a terminal. The major steps are all included below, but it might behoove you to research anything you don't know. I use a Chromebook's Linux container for such development, but anything containing a Bash terminal should work just fine.
 
 Second, this tutorial follows the steps to create and use a domain I registered for this purpose. When following along, you'll want to purchase your own domain and substitute it whenever you see `indianatrektribe.online`, `indianatrektribe_online`, or similar conventions.
 
@@ -14,7 +14,7 @@ Second, this tutorial follows the steps to create and use a domain I registered 
 
 ## Registering a Domain Name ##
 
-The first step here is to make sure you have a domain name secured through a [registrar](https://www.namecheap.com/guru-guides/registries-registrars-and-registrants-what-is-the-difference-dp/). There are several choices out there to choose from, but in this case, we're going to use [Namecheap](https://namecheap.com). This process is fairly straight-forward, and once the transaction is complete, you'll be able to view your domain. Note that when we purchase the domain, we're also going to buy an SSL certificate, as shown in the next section. 
+The first step is to make sure you have a domain name secured through a [registrar](https://www.namecheap.com/guru-guides/registries-registrars-and-registrants-what-is-the-difference-dp/). There are several choices out there to choose from, but in this case, we're going to use [Namecheap](https://namecheap.com). This process is fairly straight-forward, and once the transaction is complete, you'll be able to view your domain. Note that when you purchase the domain, you're also going to buy an SSL certificate, as shown in the next section. 
 
 ![Domain Registration](./images/deploy-img-domain-registration.png)
 
@@ -22,7 +22,7 @@ The first step here is to make sure you have a domain name secured through a [re
 
 ## Obtaining an SSL Certificate ##
 
-Once we have a domain secured, we'll want to attach an [SSL Certificate](https://www.namecheap.com/security/what-is-ssl-secure-socket-layer-definition/) to it. When you purchase the domain, you will also be given an option to add an SSL certificate to your cart.
+Once you have a domain secured, you'll want to attach an [SSL Certificate](https://www.namecheap.com/security/what-is-ssl-secure-socket-layer-definition/) to it. When you purchase the domain, you will also be given an option to add an SSL certificate to your cart.
 
 An SSL (Secure Sockets Layer) certificate is a digital certificate that authenticates a website's identity and enables an encrypted connection between a web server and a web browser. The certificate is a bit of code on a web server that provides security for online communications. When a web browser contacts a secured website, the SSL certificate enables an encrypted connection. This link ensures that all data passed between the web server and browser remains private.
 
@@ -38,13 +38,13 @@ We'll deal with this some more later. For now, just make sure you have an SSL ce
 
 ## Create a DigitalOcean Account ##
 
-For this project, we'll be using [DigitalOcean](https://digitalocean.com) as our hosting platform. It is here that you will create your remote virtual machine (VM) in the cloud. You will then provision this machine as a web server to host your website. Setting up an account with DigitalOcean is relatively straightforward. Simply go to the link above and create your account.
+For this project, we'll be using [DigitalOcean](https://m.do.co/c/b2ef32b53bbc) as our hosting platform. It is here that you will create your remote virtual machine (VM) in the cloud. You will then provision this machine as a web server to host your website. Setting up an account with DigitalOcean is relatively straightforward. Simply go to the link above and create your account.
 
 ---
 
 ## Installing doctl ##
 
-DigitalOcean has a handy command line interface (CLI) that we will be using for much of our work. This CLI is called [doctl](https://docs.digitalocean.com/reference/doctl/), and you'll want to follow this link to learn about, install, and configure the CLI for our work throughout this process. Don't forget to create an [API token](https://docs.digitalocean.com/reference/api/create-personal-access-token/) and store it in a safe place, such as your password manager if you have one. Once you have `doctl` installed and configured, you can check this by running the following command in your terminal:
+DigitalOcean has a handy command line interface (CLI) that you will be using for much of your work. This CLI is called [doctl](https://docs.digitalocean.com/reference/doctl/), and you'll want to follow this link to learn about, install, and configure the CLI for our work throughout this process. Don't forget to create an [API token](https://docs.digitalocean.com/reference/api/create-personal-access-token/) and store it in a safe place, such as your password manager if you have one. Once you have `doctl` installed and configured, you can check this by running the following command in your terminal:
 
 ```shell
 doctl account get
@@ -73,6 +73,9 @@ If successful, you should see some output confirming the key was added, along wi
 ```shell
 doctl compute ssh-key list
 ```
+
+Output:
+
 ```shell
 ID          Name          FingerPrint
 39125477    do-key-rsa    55:5c:ce:7d:b3:6d:89:7b:37:48:bd:25:99:86:ae:eb
@@ -84,11 +87,14 @@ You'll need to remember the ID of your key, because you'll need it for the next 
 
 ## Create a Droplet on DigitalOcean ##
 
-DigitalOcean calls their VMs `droplets`. To create a droplet, run the following command:
+DigitalOcean calls their VMs (Virtual Machines) `droplets`. To create a droplet, run the following command:
 
 ```shell
 doctl compute droplet create --image debian-12-x64 --size s-1vcpu-2gb --region nyc1 --enable-monitoring --ssh-keys 39125477 --tag-name webserver indianatrektribe.online
 ```
+
+Output:
+
 ```shell
 ID           Name                       Public IPv4    Private IPv4    Public IPv6    Memory    VCPUs    Disk    Region    Image            VPC UUID    Status    Tags         Features                    Volumes
 370152202    indianatrektribe.online                                                  2048      1        50      nyc1      Debian 12 x64                new       webserver    monitoring,droplet_agent    
@@ -144,6 +150,8 @@ doctl compute firewall create --name webserver-firewall \
  --outbound-rules "protocol:icmp,address:0.0.0.0/0,address:::/0 protocol:tcp,ports:all,address:0.0.0.0/0,address:::/0 protocol:udp,ports:all,address:0.0.0.0/0,address:::/0"
 ```
 
+Output:
+
 ```shell
 ID                                      Name                  Status     Created At              Inbound Rules                                                                                                                                                      Outbound Rules                                                                                                                                          Droplet IDs    Tags    Pending Changes
 23fd8e14-4bdf-42b5-a0c4-c35ce5272a42    webserver-firewall    waiting    2023-08-16T02:27:19Z    protocol:tcp,ports:22,address:0.0.0.0/0,address:::/0 protocol:tcp,ports:80,address:0.0.0.0/0,address:::/0 protocol:tcp,ports:443,address:0.0.0.0/0,address:::/0    protocol:icmp,address:0.0.0.0/0,address:::/0 protocol:tcp,ports:0,address:0.0.0.0/0,address:::/0 protocol:udp,ports:0,address:0.0.0.0/0,address:::/0    370152202              droplet_id:370152202,removing:false,status:waiting
@@ -176,7 +184,7 @@ These rules can be further refined by adding specific port ranges, but such is b
 
 ## Add Sudo User to the Droplet ##
 
-It's not a good idea to remote into your VM as a root user. Root access is powerful and should only be used with extreme caution. In place of this, you'll want to create a new user and give it root (priveleged) access. First log into your droplet:
+It's not a good idea to remote into your VM as a root user. Root access is powerful and should only be used with extreme caution. In place of this, you'll want to create a new user and give it `sudo` (priveleged) access. First log into your droplet:
 
 ```shell
 doctl compute ssh indianatrektribe.online --ssh-key-path ~/.ssh/do-key-rsa
@@ -190,7 +198,7 @@ sudo adduser brett
 
 You'll need to supply a password (make sure you remember it!) and answer a few questions (which I typically leave blank), then you'll be prompted if the information is correct.
 
-Next, give your new user sudo priveleges:
+Next, give your new user `sudo` priveleges:
 
 ```shell
 usermod -aG sudo brett
@@ -217,7 +225,9 @@ sudo apt update && sudo apt upgrade -y
 
 You'll have to enter your password the first time you use `sudo` in a session. The command above will update your server and apply any upgrades that might be available.
 
-Now you'll need to transfer the ssh keys from the root user's profile to your new user's profile. To do this you need to run the following commands. First you need to create the `.ssh` directory on the user's root directory:
+Now you'll need to transfer the ssh keys from the root user's profile to your new user's profile. To do this you need to run the following commands.
+
+First you need to create the `.ssh` directory on the user's root directory:
 
 ```shell
 mkdir /home/$USER/.ssh
@@ -247,7 +257,7 @@ Make it readable only by the user:
 sudo chmod 600 /home/$USER/.ssh/authorized_keys
 ```
 
-Now exit the current sessions by running the following command twice:
+Now exit the current sessions by typing and entering the following command twice:
 
 ```shell
 exit
@@ -334,7 +344,7 @@ Next you'll need to pull down a set of website files to serve, which we'll cover
 
 ---
 
-## Pull Down Website to Remote Host from GitHub ##
+## Pull Down a Website to the Remote Host from GitHub ##
 
 Now you're going to pull down a repository from GitHub that contains a basic front-end website. Before you can do this, however, you'll need to install `git` on the remote host. You can do this with the following command:
 
@@ -548,7 +558,7 @@ Locality Name (eg, city) []:Indianapolis
 Organization Name (eg, company) [Internet Widgits Pty Ltd]:NA
 Organizational Unit Name (eg, section) []:NA
 Common Name (e.g. server FQDN or YOUR name) []:indianatrektribe.online
-Email Address []:buskirkbrett8@gmail.com
+Email Address []:myemail@gmail.com
 
 Please enter the following 'extra' attributes
 to be sent with your certificate request
@@ -624,6 +634,10 @@ scp -i ~/.ssh/do-key-rsa indianatrektribe_online.zip root@indianatrektribe.onlin
 ```
 
 Now remote into your droplet as the root user again and navigate to the `ssl` directory, where you need to extract the files:
+
+```shell
+doctl compute ssh indianatrektribe.online --ssh-key-path ~/.ssh/do-key-rsa
+```
 
 ```shell
 apt install unzip && unzip indianatrektribe_online.zip
