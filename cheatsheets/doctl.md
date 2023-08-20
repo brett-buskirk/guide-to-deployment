@@ -103,3 +103,8 @@ Remotely access a droplet as a specific user:
 doctl compute ssh indianatrektribe.online --ssh-key-path ~/.ssh/do-key-rsa --ssh-user brett
 ```
 
+---
+
+## Online Documentation ##
+
+You can find full online documentation for `doctl` commands at: [Doctl Command Reference](https://docs.digitalocean.com/reference/doctl/reference/)
