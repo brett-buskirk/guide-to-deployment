@@ -26,7 +26,7 @@ Once you have a domain secured, you'll want to attach an [SSL Certificate](https
 
 An SSL (Secure Sockets Layer) certificate is a digital certificate that authenticates a website's identity and enables an encrypted connection between a web server and a web browser. The certificate is a bit of code on a web server that provides security for online communications. When a web browser contacts a secured website, the SSL certificate enables an encrypted connection. This link ensures that all data passed between the web server and browser remains private.
 
-A website needs an SSL certificate in order to keep user data secure, verify ownership of the website, prevent attackers from creating a fake version of the site, and gain user trust. Without SSL, site visitors and customers are at higher risk of having their data stolen. SSL protects websites from phishing scams, data breaches, and many other threats.
+A website needs an SSL certificate in order to keep user data secure, verify ownership of the website, prevent attackers from creating a fake version of the site, and gain user trust. Without SSL, site visitors and customers are at higher risk of having their data stolen or injection of malware via a man-in-the-middle (MiTM) attack.
 
 Once you have purchased the SSL certificate, you should be able to see it on the registrar's dashboard.
 
